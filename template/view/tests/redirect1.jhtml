@@ -1,0 +1,2 @@
+[[! redirect using a relative path ]]
+[[ rc.redirect("redirect_dest"); ]]

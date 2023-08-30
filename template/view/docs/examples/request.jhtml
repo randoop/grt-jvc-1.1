@@ -1,0 +1,88 @@
+[[! include shared header file ]]
+[[+ /shared/_header.jhtml ]] 
+
+<h2>Request Example</h2>
+
+When a page corresponding to a view template is requested
+a JVCRequestContext object is created and passed to the appropriate
+JVC controller and page generator.
+<p>
+The following table shows the information contained in the JVCRequestContext
+for this page request.
+
+[[! include file that creates a table displaying the request info ]]
+[[+ _request.jhtml ]] 
+
+<p>
+Try passing some arguments to this page.  For example:
+<a href='request?jvc=cool'>request?jvc=cool</a>
+<p>
+
+Here is part of the actual template code for this page.
+<p>
+
+<div class='codebox'>
+<pre>
+  \[[! include shared header file \]]
+  \[[+ /shared/_header.jhtml \]] 
+
+  &lt;h2&gt;Request Example&lt;/h2&gt;
+
+  A JVCRequestContext object is created and passed to the appropriate
+  JVC controller and page generator when a page corresponding to a
+  view template is requested.
+  &lt;p&gt;
+  The following table shows the information contained in the JVCRequestContext
+  for this page request.
+
+  \[[! include file that creates a table displaying the request info \]]
+  <span class='red'>\[[+ _request.jhtml \]]</span>
+
+  &lt;p&gt;
+  Try passing some arguments to this page.  For example:
+  &lt;a href='request?jvc=cool'&gt;request?jvc=cool&lt;/a&gt;
+  &lt;p&gt;
+
+  Here is part of the actual template code for this page.
+  ...
+  ...
+</pre>
+</div>
+
+<p>
+And here is whats in the included <span class='red'>_request.jhtml</span> file.
+Notice the <span class='red'>rc</span> variable, it holds the JVCRequestContext.
+<p>
+<div class='codebox'>
+<pre>
+  &lt;table border=1 cellpadding=4 cellspacing=0&gt;
+  &lt;tr&gt;&lt;td&gt;isSecure()&lt;/td&gt;&lt;td&gt;\[[= <span class='red'>rc</span>.isSecure() \]]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;getSchema()&lt;/td&gt;&lt;td&gt;\[[= <span class='red'>rc</span>.getScheme() \]]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;getMethod()&lt;/td&gt;&lt;td&gt;\[[= <span class='red'>rc</span>.getMethod() \]]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;getServerName()&lt;/td&gt;&lt;td&gt;\[[= <span class='red'>rc</span>.getServerName() \]]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;getServerPort()&lt;/td&gt;&lt;td&gt;\[[= <span class='red'>rc</span>.getServerPort() \]]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;getContextPath()&lt;/td&gt;&lt;td&gt;\[[= <span class='red'>rc</span>.getContextPath() \]]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;getServletPath()&lt;/td&gt;&lt;td&gt;\[[= <span class='red'>rc</span>.getServletPath() \]]&lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;getQueryString()&lt;/td&gt;&lt;td&gt;\[[= <span class='red'>rc</span>.getQueryString() \]]&lt;/td&gt;&lt;/tr&gt;
+
+  \[[ for (String key : <span class='red'>rc</span>.getParamNames()) { \]]
+  &lt;tr&gt;&lt;td&gt;getParam("\[[= key \]]")&lt;/td&gt;&lt;td&gt;\[[= <span class='red'>rc</span>.getParam(key) \]]&lt;/td&gt;&lt;/tr&gt;
+  \[[ } \]]   
+
+  \[[ for (String name : <span class='red'>rc</span>.getCookieNames()) { \]]
+  &lt;tr&gt;&lt;td&gt;getCookie("\[[= name \]]")&lt;/td&gt;&lt;td&gt;\[[= <span class='red'>rc</span>.getCookie(name).getValue() \]]&lt;/td&gt;&lt;/tr&gt;
+  \[[ } \]]   
+
+  \[[ for (String name : <span class='red'>rc</span>.getSessionAttrNames()) { \]]
+  &lt;tr&gt;&lt;td&gt;getSessionAttr("\[[= name \]]")&lt;/td&gt;&lt;td&gt;\[[= <span class='red'>rc</span>.getSessionAttr(name) \]]&lt;/td&gt;&lt;/tr&gt;
+  \[[ } \]]   
+  &lt;/table&gt;
+</pre>
+</div>
+
+<p>
+<a href='../index#examples'>Back to documentation index</a>
+
+[[! include shared footer file ]]
+[[+ /shared/_footer.jhtml ]] 
+

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="jvc" basedir="." default="all">
+    <property environment="env"/>
+	
+    <property name="dev.dir" value="${basedir}/../.."/>
+    <property name="src.dir" value="${basedir}/src"/>
+    <property name="lib.dir" value="${basedir}/lib"/>
+    <property name="tpl.dir" value="${basedir}/template"/>
+    <property name="doc.dir" value="${basedir}/docs"/>
+    <property name="dist.dir" value="${basedir}/dist"/>
+    <property name="class.dir" value="${lib.dir}/classes"/>
+	<property name="javacc.home" value="${dev.dir}/javacc"/>
+	<property name="tomcat.dir" value="${env.CATALINA_HOME}"/>
+	<property name="version" value="1.1"/>
+
+	<condition property="debug.arg" value="-debug" else="">
+		<or>
+		  <isset property="line.numbers"/>
+		  <isset property="debug"/>
+		</or>
+	</condition>
+
+	<condition property="regen.arg" value="-force" else="">
+		<or>
+		  <isset property="regen"/>
+		  <isset property="debug"/>
+		</or>
+	</condition>
+
+	<path id="project.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar"/>
+			<exclude name="jvc.jar"/>
+		</fileset>
+		<pathelement path="${tomcat.dir}/lib/servlet-api.jar"/>
+		<pathelement path="${class.dir}" />
+	</path>
+
+	<target name="init">
+		<mkdir dir="${class.dir}" />
+		<mkdir dir="${doc.dir}/javadocs" />
+	</target>
+
+	<target name="tools" depends="init">
+	    <!-- generate the parser -->
+		<javacc
+		target="${src.dir}/com/pmdesigns/jvc/tools/JVCParser.jj"
+		outputdirectory="${src.dir}/com/pmdesigns/jvc/tools"
+		javacchome="${javacc.home}"
+		/>
+
+	    <!-- compile the parser files -->
+		<javac
+		debug="true"
+		srcdir="${src.dir}/com/pmdesigns/jvc"
+		excludes="${src.dir}/com/pmdesigns/jvc/tools/JVCGenerator.java,${src.dir}/com/pmdesigns/jvc/tools/bootstrap/**"
+		destdir="${class.dir}"
+		classpathref="project.classpath"
+		/>
+		
+	    <!-- use the parser to generate the bootstrap generators -->
+		<java classname="com.pmdesigns.jvc.tools.JVCBootstrapGenerator">
+		<classpath path="${lib.dir}/classes"/>
+		<arg line="${tpl.dir}/bootstrap ${src.dir} ${regen.arg} ${debug.arg}" />
+		</java>
+		
+	    <!-- compile the bootstrap generators -->
+		<javac
+		debug="true"
+		srcdir="${src.dir}/com/pmdesigns/jvc"
+		destdir="${class.dir}"
+		classpathref="project.classpath"
+		/>
+		
+		<jar
+		destfile="${lib.dir}/jvc.jar"
+		basedir="${class.dir}"
+		includes="com/pmdesigns/jvc/**"
+		/>
+	</target>
+
+	<target name="javadocs" depends="tools">
+		<javadoc
+		    destdir="${doc.dir}/javadocs"
+			encoding="UTF-8"
+			docencoding="iso-8859-1"
+			author="true"
+			version="true"
+			use="false"
+			breakiterator="true"
+			windowtitle="JVC"
+			classpathref="project.classpath">
+			<fileset dir="${src.dir}" defaultexcludes="yes">
+				<include name="**/*.java" />
+			</fileset>
+			<link href="http://java.sun.com/j2se/1.5/docs/api" offline="true" packagelistLoc="build/javadoc/j2se-1.5" />
+		</javadoc>
+	</target>
+			
+	<target name="clean">
+	    <delete dir="${class.dir}"/>
+	    <delete file="${lib.dir}/jvc.jar"/>
+	    <delete>
+		    <fileset dir="${dist.dir}" includes="jvc-*.tar.gz"/>
+		</delete>
+	</target>
+	
+	<target name="realclean" depends="clean">
+	    <defaultexcludes remove="**/*~"/>
+		<delete>
+			<fileset dir="${basedir}" includes="**/*~"/>
+			<fileset dir="${src.dir}" includes="**/*.java">
+				<contains text="This is a machine generated file. DO NOT EDIT." casesensitive="yes"/>
+			</fileset>
+		</delete>
+	</target>
+	
+	<target name="new_project" depends="tools">
+		<fail message="Usage: ant new_project -Dname=xxx [-Dpkg.prefix=xxx] [-Dout.dir=xxx]">
+		<condition>
+		<not>
+          <isset property="name"/>
+        </not>
+        </condition>
+        </fail>
+
+		<condition property="pkg.prefix" value="">
+		<not>
+		  <isset property="pkg.prefix"/>
+		</not>
+		</condition>
+		
+		<condition property="out.dir" value="../${name}">
+		<not>
+		  <isset property="out.dir"/>
+		</not>
+		</condition>
+
+		<echo message="Creating new project"/>
+		<echo message="        name: '${name}'"/>
+		<echo message="  pkg.prefix: '${pkg.prefix}'"/>
+		<echo message="     out.dir: '${out.dir}'"/>
+		
+		<mkdir dir="${out.dir}" />
+
+		<copy todir="${out.dir}">
+		<fileset dir="${tpl.dir}" excludes="**/bootstrap/" />
+		</copy>
+
+		<copy todir="${out.dir}/docs">
+		<fileset dir="${doc.dir}"/>
+		</copy>
+
+		<copy todir="${out.dir}/lib">
+		<fileset dir="${lib.dir}" includes="*.jar"/>
+		</copy>
+
+		<move file="${out.dir}/build.xml.tpl" tofile="${out.dir}/build.xml"/>
+		<replace file="${out.dir}/build.xml">
+		<replacefilter token="PROJECT_NAME" value="${name}"/>
+		<replacefilter token="PACKAGE_PREFIX" value="${pkg.prefix}"/>
+		</replace>
+		
+		<move file="${out.dir}/dist/WEB-INF/web.xml.tpl" tofile="${out.dir}/dist/WEB-INF/web.xml"/>
+		<replace file="${out.dir}/dist/WEB-INF/web.xml" token="PKG_PREFIX" value="${pkg.prefix}"/>
+		
+		<move file="${out.dir}/view/index.jhtml.tpl" tofile="${out.dir}/view/index.jhtml"/>
+		<replace file="${out.dir}/view/index.jhtml" token="PROJECT_NAME" value="${name}"/>
+		
+		<move file="${out.dir}/conf/log4j.properties.tpl" tofile="${out.dir}/conf/log4j.properties"/>
+		<replace file="${out.dir}/conf/log4j.properties"
+		         token="LOG_FILE" value="${tomcat.dir}/logs/${name}.log"/>
+	</target>
+
+	<!-- just for development testing -->
+	<target name="jvcdemo">
+		<property name="name" value="jvcdemo"/>
+	    <antcall target="new_project" />
+		
+		<exec executable="${tomcat.dir}/bin/shutdown.sh">
+		    <arg value="-force"/>
+		</exec>
+  
+		<exec executable="ant">
+		    <arg value="-f"/>
+		    <arg value="${dev.dir}/jvcdemo/build.xml"/>
+		    <arg value="install"/>
+		</exec>
+  
+		<exec executable="${tomcat.dir}/bin/startup.sh"/>
+	</target>
+
+	<target name="dist" depends="realclean,tools,javadocs">
+		<tar destfile="${dist.dir}/jvc-${version}.tar.gz" compression="gzip">
+			<tarfileset dir="${basedir}" prefix="jvc-${version}">
+				<exclude name="${dist.dir}\**"/>
+			</tarfileset>
+		</tar>
+	</target>
+	
+	<target name="all" depends="tools">
+	</target>
+		
+</project>
+

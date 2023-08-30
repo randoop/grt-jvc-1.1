@@ -1,0 +1,9 @@
+[[
+// redirect to the 'redirect' page and pass a 'redirected=true' argument
+rc.redirect("redirect?redirected=true"); 
+
+// NOTE: 'rc' is a variable holding the JVCRequestContext. It is available to all template pages.
+// NOTE: normally this type of code would go in your controller
+]]
+
+This page will never be displayed because of the redirect above.

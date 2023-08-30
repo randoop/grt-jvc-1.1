@@ -1,0 +1,11 @@
+[[! this template just contains comments ]]
+[[! comment tag enclosing other tags
+   [[+ _foo.jhtml ]]
+   [[ int i = 0; ]]
+   [[= i ]]
+]]
+
+hello test
+
+[[! the generator output for this template should just produce the string 'hello test'
+   (with some leading and trailing white space). ]]

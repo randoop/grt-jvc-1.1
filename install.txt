@@ -1,0 +1,39 @@
+Installation Instructions
+
+		
+1. Download and un-tar Java (a JDK not just a JRE)
+2. Set the JAVA_HOME environment variable
+3. Add $JAVA_HOME/bin to your PATH
+
+   to test type: java -version
+   you should see something like: java version "1.6.0_11"
+
+4. Download and un-tar Tomcat
+5. Set the CATALINA_HOME environment variable
+6. Set the CATALINA_PID environment variable to something like $CATALINA_HOME/catalina.pid
+   (otherwise 'shutdown.sh -force' don't work correctly)
+
+   to test type: $CATALINA_HOME/bin/startup.sh (or sudo $CATALINA_HOME/bin/startup.sh if you installed Tomcat as root)
+   and point your browser at http://localhost:8080/
+   you should see the Tomcat start page.
+
+7. Download and un-tar Ant
+8. Add ant to your PATH
+
+   to test type: ant -version
+   you should see something like: Apache Ant version 1.7.1 compiled on June 27 2008
+
+9. Download and un-tar JVC from https://sourceforge.net/projects/javaviewcontrol
+
+   to test create a 'hello jvc' web app as follows:
+
+   Let's assume you installed JVC in your ~/dev/jvc/ directory, then you can create a
+   'hello_jvc' app by typing:
+
+   ~/dev/jvc$ ant new_project -Dname=hello_jvc
+   ~/dev/jvc$ cd ../hello_jvc
+   ~/dev/hello_jvc$ ant test
+   ~/dev/hello_jvc$ ant rev # (or 'sudo ant rev' if you installed tomcat as root)
+
+   At this point you should be able to go to http://localhost:8080/hello_jvc and see
+   your new web app.

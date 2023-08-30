@@ -1,0 +1,23 @@
+
+<table border=1 cellpadding=4 cellspacing=0>
+<tr><td>isSecure()</td><td>[[= rc.isSecure() ]]</td></tr>
+<tr><td>getSchema()</td><td>[[= rc.getScheme() ]]</td></tr>
+<tr><td>getMethod()</td><td>[[= rc.getMethod() ]]</td></tr>
+<tr><td>getServerName()</td><td>[[= rc.getServerName() ]]</td></tr>
+<tr><td>getServerPort()</td><td>[[= rc.getServerPort() ]]</td></tr>
+<tr><td>getContextPath()</td><td>[[= rc.getContextPath() ]]</td></tr>
+<tr><td>getServletPath()</td><td>[[= rc.getServletPath() ]]</td></tr>
+<tr><td>getQueryString()</td><td>[[= rc.getQueryString() ]]</td></tr>
+
+[[ for (String key : rc.getParamNames()) { ]]
+<tr><td>getParam("[[= key ]]")</td><td>[[= rc.getParam(key) ]]</td></tr>
+[[ } ]]   
+
+[[ for (String name : rc.getCookieNames()) { ]]
+<tr><td>getCookie("[[= name ]]")</td><td>[[= rc.getCookie(name).getValue() ]]</td></tr>
+[[ } ]]   
+
+[[ for (String name : rc.getSessionAttrNames()) { ]]
+<tr><td>getSessionAttr("[[= name ]]")</td><td>[[= rc.getSessionAttr(name) ]]</td></tr>
+[[ } ]]   
+</table>

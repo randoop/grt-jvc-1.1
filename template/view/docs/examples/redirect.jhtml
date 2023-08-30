@@ -1,0 +1,58 @@
+[[+ /shared/_header.jhtml ]]
+
+<h2>Redirect Demo[[ if ("true".equals(rc.getParam("redirected"))) {]] (Redirected)[[}]]</h2>
+
+The JVCRequestContext object also allows you to send non-standard HTTP responses
+(ie. not HTTP_OK) to page requests.
+<p>
+For example, <b><a href='bouncer'>this link</a></b> will take you to a page
+that will send a redirect response causing you to bounce back to this page
+(with a 'redirected=true' argument).
+<p>
+
+Here is part of the actual template code for this page.
+<p>
+
+<div class='codebox'>
+<pre>
+  \[[! include shared header file \]]
+  \[[+ /shared/_header.jhtml \]] 
+
+  &lt;h2&gt;Redirect Demo\[[ if ("true".equals(rc.getParam("redirected"))) {\]] (Redirected)\[[}\]]&lt;/h2&gt;
+
+  The JVCRequestContext object also allows you to send non-standard HTTP responses
+  (ie. not HTTP_OK) to page requests.
+  &lt;p&gt;
+  For example, &lt;b&gt;&lt;a <span class='red'>href='bouncer'</span>&gt;this link&lt;/a&gt;&lt;/b&gt; will take you to a page
+  that will send a redirect response causing you to bounce back to this page
+  (with a 'redirected=true' argument).
+  &lt;p&gt;
+
+  Here is part of the actual template code for this page.
+  ...
+  ...
+</pre>
+</div>
+
+<p>
+And here is whats in the link target <span class='red'>bouncer</span> file.
+<p>
+<div class='codebox'>
+<pre>
+  \[[
+  // redirect to the 'redirect' page and pass a 'redirected=true' argument
+  rc.redirect("redirect?redirected=true"); 
+
+  // NOTE: 'rc' is a variable holding the JVCRequestContext. It is available to all template pages.
+  // NOTE: normally this type of code would go in your controller
+  \]]
+
+  This page will never be displayed because of the redirect above.
+</pre>
+</div>
+
+<p>
+<a href='../index#examples'>Back to documentation index</a>
+
+[[+ /shared/_footer.jhtml ]]
+

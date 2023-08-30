@@ -1,0 +1,16 @@
+
+version: 0.1.0
+date: nov 29, 2008
+notes: Initial release.
+
+version: 1.0
+date: dec 29, 2008
+notes: 1.0 release includes a number of bug fixes, unit tests,
+log4j support, Javadocs, an automatically generated global Application object,
+a 'flash' map for simplified contoller to page generator message passing and
+updated documentation.	
+
+version: 1.1
+date: feb 4, 2009
+notes: added global and local base controllers, added form helper methods to base controller,
+refactored the generator to use templates, added Helper and include it statically in all generators.

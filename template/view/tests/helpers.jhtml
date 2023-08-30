@@ -1,0 +1,1 @@
+[[= currencyFormat(1)]],[[= isBlank("")]],[[= isBlank(null)]],[[= isBlank("foo")]]

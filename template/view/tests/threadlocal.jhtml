@@ -1,0 +1,3 @@
+[[ import com.pmdesigns.jvc.JVCDispatcher; ]]
+
+servlet path: [[= JVCDispatcher.getRC().getServletPath() ]]

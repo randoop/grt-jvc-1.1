@@ -1,0 +1,335 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<!-- This document was submitted by mike dooley (mike.dooley@yahoo.com) -->
+<link href="main.css" media="screen" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<h1>JVC - Java View Controller</h1>
+
+<h2>What is JVC?</h2>
+<p>
+JVC is a tool for creating Java web applications.
+<p>
+Most well designed web applications separate their components
+into <em>models</em>, <em>views</em> and <em>controllers</em>.  JVC
+creates the <em>view</em> and <em>controller</em> part of your
+web application (you are free to use any <em>model</em> implementation you like).
+<p>
+JVC is simple and the web applications it creates are fast because the
+requests are processed by pre-compiled Java code.  For even better
+performance we recommend configuring your web server so that the static
+content is handled by an Apache server instead of by your JVC app.
+<p>
+Writing a JVC web app is simple because you just write POJO's and you
+don't need any xml configuration files.
+<p>
+JVC uses standard open source tools like Tomcat, Ant and Log4j.
+<p>
+JVC applications share many similarities with Ruby on Rails applications,
+but since JVC apps are written in Java many errors can be caught while
+compiling instead of during runtime.
+
+<h2>What does JVC do?</h2>
+
+<ol>
+<li>Creates web application project skeletons (see <a href="#hello">Hello JVC section</a>)</li>
+
+<li>Converts <a href="#templates">view templates</a> into
+<a href="#generators">page generator</a> and
+<a href="#controllers">controller</a> classes (as part of the build process)</li> 
+
+<li><a href="#dispatcher">Dispatches page requests</a> to
+the appropriate page generator and controller and returns their response (at run time).</li>
+</ol>
+<p>
+<img src='jvcflow.png'>
+
+<h2>What do you do?</h2>
+
+<ul>
+<li>Add your 'business logic' code to the <a href="#controllers">controller</a> 
+classes that were generated during the build process.</li>
+<li>Add a persistence mechanism, probably using an ORM solution like
+<a href='http://code.google.com/p/sqlmapper/'>SqlMapper</a> + 
+<a href='http://code.google.com/p/persist/'>Persist</a> or Hibernate (if you're a masochist).</li>
+</ul>
+
+<h2>View Templates<a name="templates"></a></h2>
+
+View templates are just regular html files that can also contain JVC tags.
+There are only 5 JVC tag types:
+<p>
+<div class='box'>
+<table>
+<tr><td nowrap valign=top><span class='code'>[[ ... ]]</span></td><td nowrap valign=top><b>Java-code-tag</b></td>
+<td>These tags contain Java code which will be executed as part of the
+page generation process.  This code has access to the <a href="#dispatcher">JVCRequestContext</a> via the
+variable <span class='code'>rc</span>
+and the companion <a href="#controllers">Controller</a> object via the variable <span class='code'>controller</span>.
+</td></tr>
+<tr><td nowrap valign=top><span class='code'>[[= ... ]]</span></td><td nowrap valign=top><b>Java-expression-tag</b></td>
+<td>
+These tags contain Java code which evaluates to a String.  They have access to the same
+variables as the Java-code-tags.
+</td></tr>
+<tr><td nowrap valign=top><span class='code'>[[== ... ]]</span></td><td nowrap valign=top><b>HTML escaped Java-expression-tag</b></td>
+<td>
+These tags are exactly the same as Java-expression-tags except their output is HTML escaped.
+</td></tr>
+<tr><td nowrap valign=top><span class='code'>[[+ ... ]]</span></td><td nowrap valign=top><b>Include-tag</b></td>
+<td>
+These tags contain a path to a file to be included.  The included file's name <em>must
+begin with an underscore character</em> (ie. _myfile.jhtml) to distinguish it from
+a regular view template.
+</td></tr>
+<tr><td nowrap valign=top><span class='code'>[[! ... ]]</span></td><td nowrap valign=top><b>Comment-tag</b></td>
+<td>
+Anything inside of comment-tags is ignored (including other JVC tags).
+</td></tr>
+</table>
+</div>
+<p>
+And one meta tag pair:
+<div class='box'>
+<table>
+<tr><td nowrap valign=top><span class='code'>[[begin_cache]] ... [[end_cache]]</span></td><td nowrap valign=top><b>Cache-block</b></td>
+<td>
+Anything inside a cache-block will only be evaluated once, subsequent page requests will use the cached result.
+</td></tr>
+</table>
+</div>
+<p>
+During the build process view templates get turned into page generators and controllers.
+
+<h2>Page Generators<a name="generators"></a></h2>
+
+A page generator is an automatically generated Java class corresponding to a view template.
+The JVCDispatcher calls the appropriate page generator when it receives a request for a
+dynamic web page.
+You can think of a page generator as a view template turned inside out.
+The <em>inside</em> of the Java-code-tags in the template becomes the page generator method code
+and the html <em>outside</em> of the tags becomes the page generator output.
+The contents of Java-expression-tags are converted to Strings and also become part of
+the page generator output.  The comment-tags are discarded.  The files in the include-tags
+are loaded and processed just like the rest of the view template.
+<p>
+You can look at the page generator source code, but don't modify it (your changes will
+be overwritten the next time the project is rebuilt).  The page generators for the
+view templates in the <span class="code">view</span> directory become corresponding Java
+classes located in the <span class="code">src/&lt;package_prefix&gt;/generators/</span> directory
+(you specified the package_prefix when you create your project or it defaults to no package,
+see <a href="#hello">Hello JVC section</a>).
+Note: if you build your project with the <span class="code">-Dline.numbers=true</span> command line argument
+then the each line of the page generator code will contain a comment indicating
+which part of which template it came from.
+
+<h2>Controllers<a name="controllers"></a></h2>
+
+Each view template also spawns a corresponding page controller class.  The page controller
+is located in a directory under <span class='code'>src/&lt;package&nbsp;prefix&gt;/controllers/</span>
+mirroring the path to the view template relative to the <span class='code'>view/</span> directory.
+<p>
+All the page controllers corresponding to the view templates in a particular directory extend
+a 'local' base controller, and all these 'local' base controllers in turn extend a single
+'global' base controller. See the <a href="#hello">Hello JVC section</a> for an example.
+<p>
+The generated controller classes don't do anything other than provide access to the
+<a href="#dispatcher">JVCRequestContext</a>,
+but they give you a place to wire in your web application code while keeping it separate from your views.
+Page specific code can be added to in the page controllers and common code can be put in the 'local' or 'global'
+base controllers.
+<p>
+If you look at the source code for a PageGenerator.java class you will
+see that on the first line of each page generator method the
+corresponding page controller object is instantiated and stored in the
+variable <span class='code'>controller</span>.  This is how your page
+view and controller can interact.
+
+<h2>Request Dispatcher and JVCRequestContext<a name="dispatcher"></a></h2>
+
+The request dispatcher's job is examine the path part of each request, invoke the
+appropriate page generator (and controller) and return the result.
+It also serves static resources too, if necessary.
+<p>
+In the Tomcat server the JVC request dispatcher is a simple servlet.
+<p>
+The only JVC class you, as a developer, really need to know about is the 
+<a href="javadocs/com/pmdesigns/jvc/JVCRequestContext.html">JVCRequestContext</a>.
+When the request dispatcher receives a request it decides if it is for static or
+dynamic content.  If its for dynamic content then it creates a JVCRequestContext and
+instantiates the appropriate controller and PageGenerator and passes them the JVCRequestContext.
+<p>
+For more details please see <a href="javadocs/com/pmdesigns/jvc/package-summary.html">the javadocs</a>
+
+<h2>Hello JVC<a name="hello"></a></h2>
+
+Once you've installed installed JVC and its dependencies (<a href="#install">Java, Tomcat and Ant</a>)
+you can create, build, test and install a new web application in seconds.
+<p>
+Lets assume you installed JVC in your <span class='code'>~/dev/jvc/</span> directory
+then you can create a <span class='red'>hello_jvc</span> app by typing:
+<div class='codebox'>
+<pre>
+~/dev/jvc$ <span class='red'>ant new_project -Dname=hello_jvc</span>
+~/dev/jvc$ cd ../hello_jvc
+~/dev/hello_jvc$ <span class='red'>ant test</span> # run unit tests (optional)
+~/dev/hello_jvc$ $CATALINA_HOME/bin/shutdown.sh -force
+~/dev/hello_jvc$ <span class='red'>ant install</span>
+~/dev/hello_jvc$ $CATALINA_HOME/bin/startup.sh
+
+or instead of the last 3 commands you can just type:
+
+~/dev/hello_jvc$ <span class='red'>ant rev</span>
+</pre>
+</div>
+<p>
+At this point you should be able to go to http://localhost:8080/hello_jvc and see
+your new web app (assuming your Tomcat server is in its default configuration).
+<br>
+(Note: you may have to start/stop Tomcat and install your app as root if you installed Tomcat as root).
+<p>
+Now lets look at what was created.
+<div class='codebox'>
+<pre>
+hello_jvc/
+  build.xml
+  conf/
+    ...
+  dist/
+    ...
+  docs/
+    ...
+  lib/
+    ...
+  src/
+    Application.java
+    controllers/
+      <span class='red'>BaseController.java</span>
+      docs/
+        BaseDocsController.java
+        examples/
+          <span class='red'>BaseExamplesController.java</span>
+          FormTestController.java
+          RequestController.java
+          BouncerController.java
+          RedirectController.java
+          <span class='red'>TagController.java</span>
+      ...
+    generators/
+      BaseGenerator.java
+      docs/
+        examples/
+          BouncerGenerator.java
+          FormTestGenerator.java
+          RedirectGenerator.java
+          RequestGenerator.java
+          <span class='red'>TagGenerator.java</span>
+      ...
+    test/
+      ...
+    utils/
+      Helpers.java
+  view/
+    docs/
+      examples/
+        bouncer.jhtml
+        formTest.jhtml
+        redirect.jhtml
+        _request.jhtml
+        request.jhtml
+        <span class='red'>tag.jhtml</span>
+      ...
+    shared/
+      ...
+    static/
+      ...
+    tests/
+      ...
+</pre>
+</div>
+<p>
+Notice how, for example, the
+<span class='code'><span class='red'>tag.jhtml</span></span>
+view template spawns the
+<span class='code'><span class='red'>TagGenerator.java</span></span> page generator
+and the
+<span class='code'><span class='red'>TagController.java</span></span>,
+<span class='code'><span class='red'>BaseExamplesController.java</span></span> and
+<span class='code'><span class='red'>BaseController.java</span></span>
+controllers.
+<p>
+Use the <span class='code'>-Dpkg.prefix</span> option when creating your application to cause the
+generated code to be put
+into your own java package.  For example: if you are creating a web app called <span class='code'>my_app</span>
+and want your code to be in the package <span class='code'>com.acme</span> then type:
+<span class='code'>ant new_project -Dname=my_app <span class='red'>-Dpkg.prefix=com.acme</span></span>
+
+<h2>Tips and Tricks</h2>
+<ul>
+<li>Included template file names must start with underscore character (ie. <span class='code'>[[+ _include_me.jhtml ]]</span>)
+to distinguish them from normal view template files.</li>
+<li>When you rebuild your app the generator tool will regenerate the page generator source file if the corresponding
+view template has been modified, but it doesn't check if any included files have been modified, so when you
+edit an included view template file you should use add the <span class='code'>-Dregen=t</span> to
+your ant call.  For example: <span class='code'>ant install -Dregen=t</span></li>
+<li>To specify an absolute link to a page in your app you need to prepend the
+<span class='code'>rc.contextPath()</span> or just use
+the <span class='code'>JVCRequestContext.makeLink()</span> method
+(ie. <span class='code'>[[= <span class='red'>rc.makeLink</span>("click me", "/path/relative/to/view/directory.html") ]]</span>)
+</li>
+<li>Redirects are implemented by throwing a <span class='code'>NonStandardResponseException</span>
+so if you call <span class='code'>JVCRequestContext.redirect()</span> inside a
+<span class='code'>try...catch</span> block be sure to re-throw any
+<span class='code'>NonStandardResponseException</span>s.  This also means you don't
+have to return after calling <span class='code'>JVCRequestContext.redirect()</span>.</li>
+<li>Any character in a view template can be escaped by preceeding it with a <span class='code'>\</span> character.
+For example to display a Java-code-tag use <span class='code'>\[[</span>.
+</li>
+<li>When re-deploying your app you must stop and restart Tomcat or else it will keep
+using the old version of your app.  The <span class='code'>ant rev</span> target will do this for you.</li>
+<li>If you get a compile error in a page generator it means you have a syntax error in a
+view template.  To quickly locate the line in the template that caused the problem you can
+rebuild using the -Ddebug=t flag, which will add line number comments to the page generator source code.
+<li>When building a real web app you will need to add model classes to manage your persistent data.
+JVC places no restrictions on what model implementation you use, but we like the open source
+project <a href='http://code.google.com/p/persist/'>Persist</a>, especially when used in conjuction
+with <a href='http://code.google.com/p/sqlmapper/'>SqlMapper</a>.
+</ul>
+
+<h2>Installation<a name="install"></a></h2>
+
+<div class='box'>
+<ol>
+<li>Download and un-tar Java (a JDK not just a JRE)</li>
+<li>Set the JAVA_HOME environment variable</li>
+<li>Add $JAVA_HOME/bin to your PATH</li>
+<p>
+to test type: <span class='code'>java -version</span>
+<p>
+<li>Download and un-tar Tomcat</li>
+<li>Set the CATALINA_HOME environment variable</li>
+<li>Set the CATALINA_PID environment variable to something like $CATALINA_HOME/catalina.pid
+   (otherwise 'shutdown.sh -force' don't work correctly)</li>
+<p>
+to test type: <span class='code'>$CATALINA_HOME/bin/startup.sh</span> and go to http://localhost:8080/ you should see the Tomcat start page.
+<p>
+<li>Download and un-tar Ant</li>
+<li>Add ant to your PATH</li>
+<p>
+to test type: <span class='code'>ant -version</span>
+<p>
+<li>Download and un-tar JVC from <a href="https://sourceforge.net/projects/javaviewcontrol">sourceforge.net</a></li>
+<p>
+to test <a href="#hello">create a 'hello jvc' web app</a>
+</ol>
+</div>
+
+<p>
+<center>
+<a href="http://sourceforge.net"><img src="http://sflogo.sourceforge.net/sflogo.php?group_id=246554&amp;type=5" width="210" height="62" border="0" alt="SourceForge.net Logo" /></a>
+</center>
+</body>
+</html>

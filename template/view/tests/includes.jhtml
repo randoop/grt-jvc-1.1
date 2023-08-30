@@ -1,0 +1,4 @@
+hello [[+ _include1.jhtml ]]
+
+[[! this page should produce the string: 'hello hello1\nhello2'
+   separated by newlines (with leading and trailing whitespace) ]]

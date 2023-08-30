@@ -1,0 +1,7 @@
+[[ for (int i=10; i > 0 ; i--) { ]]
+[[= i+"," ]]
+[[}]]
+[[= "0"; ]] [[! make sure optional trailing ';' gets stripped ]]
+
+[[! this page should produce the string '10,9,8,7,6,5,4,3,2,1,0'
+  (with leading and trailing whitespace) ]]

@@ -1,0 +1,2 @@
+[[= rc.makeLink("relative", "relative/path") ]]
+[[= rc.makeLink("absolute", "/absolute/path") ]]

@@ -1,0 +1,126 @@
+[[! include shared header file ]]
+[[+ /shared/_header.jhtml ]]
+
+<h2>Form Example</h2>
+
+Try submitting this form...
+<p>
+
+<div class="box" style="width: 400px;">
+
+[[! display flash message. this can be set by the controller to provide feedback after the form has been submitted ]]
+<div id="flash_msg">[[== rc.getFlash("msg") ]]</div>
+
+[[! the form action indicates what page (generator and controller) will receive the form request.
+   in this case its just this same page ]]
+<form action='formTest' method='post'>
+<table border=0 cellpadding=2 cellspacing=2>
+<tr><td>First Name:</td><td>
+[[= controller.textInput("first", rc.getParam("first"), "size=16")]]
+</td></tr>
+<tr><td>Last Name:</td><td>
+[[= controller.textInput("last", rc.getParam("last"), "size=16")]]
+</td></tr>
+<tr><td colspan=2 align='center'><input type='submit' value='Submit'></td></tr>
+</table>
+</form>
+</div>
+
+<p>
+...and observing the request info for this page below.
+<p>
+
+[[+ _request.jhtml ]]
+
+<p>
+
+Here is part of the actual template code for this page.
+<p>
+
+<div class='codebox'>
+<pre>
+  \[[! include shared header file \]]
+  \[[+ /shared/_header.jhtml \]]
+
+  &lt;h2&gt;Form Example&lt;/h2&gt;
+
+  Try submitting this form...
+  &lt;p&gt;
+
+  &lt;div class="box" style="width: 400px;"&gt;
+  \[[! display flash message. this can be set by the controller to provide feedback after the form has been submitted \]]
+  &lt;div id="flash_msg"&gt;\[[== rc.getFlash("msg") \]]&lt;/div&gt;
+  
+  \[[! the form action indicates what page (generator and controller) will receive the form request.
+	 in this case its just this same page \]]
+  &lt;form action='<span class='red'>formTest</span>' method='post'&gt;
+  &lt;table border=0 cellpadding=2 cellspacing=2&gt;
+  &lt;tr&gt;&lt;td&gt;First Name:&lt;/td&gt;&lt;td&gt;
+  \[[= controller.textInput("first", rc.getParam("first"), "size=16")\]]
+  &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td&gt;Last Name:&lt;/td&gt;&lt;td&gt;
+  \[[= controller.textInput("last", rc.getParam("last"), "size=16")\]]
+  &lt;/td&gt;&lt;/tr&gt;
+  &lt;tr&gt;&lt;td colspan=2 align='center'&gt;&lt;input type='submit' value='Submit'&gt;&lt;/td&gt;&lt;/tr&gt;
+  &lt;/table&gt;
+  &lt;/form&gt;
+  &lt;/div&gt;
+
+  &lt;p&gt;
+  ...and observing the request info for this page below.
+  &lt;p&gt;
+  ...
+  ...
+</pre>
+</div>
+
+<p>
+Notice how the form's action parameter specifies which page generator and controller
+will receive the form request.
+<p>
+Now lets see how you can add error checking to this page.
+<p>
+First we'll edit the automatically generated <span class='code'>FormTestController.java</span>
+file to add some simple error checking code (highlighted).
+
+<div class='codebox'>
+<pre>
+  package controllers.docs.examples;
+
+  import com.pmdesigns.jvc.JVCRequestContext;
+  <span class='red'>import java.util.HashMap;
+  import utils.Helpers;</span>
+
+  public class FormTestController extends BaseExamplesController {
+
+	  public FormTestController(JVCRequestContext rc) {
+		  super(rc);
+<span class='red'>
+		  errors = new HashMap&lt;String,String&gt;();
+		  if (rc.isPost()) {
+			  String first = rc.getParam("first");
+			  if (Helpers.isBlank(first)) errors.put("first", "Can't be blank");
+
+			  String last = rc.getParam("last");
+			  if (Helpers.isBlank(last)) errors.put("last", "Can't be blank");
+
+			  if (errors.isEmpty()) {
+				  rc.setFlash("msg", "Got new name: "+first+" "+last);
+			  } else {
+				  rc.setFlash("msg", "Sorry, try again");
+			  }
+		  }</span>		  
+	  }
+  }
+</pre>
+</div>
+<p>
+Try making these changes to your own app and see what happens when you submit
+the form without filling in the first and/or last name fields. (Hint: after you've
+made the changes type: <span class='code'>ant rev</span> to stop tomcat, re-build your
+project, install it and re-start tomcat).
+<p>
+<a href='../index#examples'>Back to documentation index</a>
+
+[[+ /shared/_footer.jhtml ]]
+

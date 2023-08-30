@@ -1,0 +1,3 @@
+[[ rc.setFlash("flash_key", "flash value");
+   rc.redirect("tests/redirect_dest");
+]]

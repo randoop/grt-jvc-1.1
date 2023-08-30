@@ -1,0 +1,3 @@
+[[ begin_cache ]]
+[[= System.currentTimeMillis() ]]
+[[ end_cache ]]
