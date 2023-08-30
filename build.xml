@@ -73,7 +73,7 @@
 		/>
 		
 		<jar
-		destfile="${lib.dir}/jvc.jar"
+		destfile="${dist.dir}/jvc.jar"
 		basedir="${class.dir}"
 		includes="com/pmdesigns/jvc/**"
 		/>
