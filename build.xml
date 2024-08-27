@@ -12,8 +12,6 @@
 	<property name="javacc.home" value="${dev.dir}/javacc/"/>
 	<property name="tomcat.dir" value="${env.CATALINA_HOME}"/>
 	<property name="version" value="1.1"/>
-<!--	<property name="major.jar" value="${major.jar}"/>-->
-<!--	<property name="plugin" value="${plugin}"/>-->
 
 	<condition property="debug.arg" value="-debug" else="">
 		<or>
