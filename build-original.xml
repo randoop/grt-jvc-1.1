@@ -2,18 +2,16 @@
 <project name="jvc" basedir="." default="all">
     <property environment="env"/>
 	
-    <property name="dev.dir" value="${basedir}"/>
+    <property name="dev.dir" value="${basedir}/../.."/>
     <property name="src.dir" value="${basedir}/src"/>
     <property name="lib.dir" value="${basedir}/lib"/>
     <property name="tpl.dir" value="${basedir}/template"/>
     <property name="doc.dir" value="${basedir}/docs"/>
     <property name="dist.dir" value="${basedir}/dist"/>
     <property name="class.dir" value="${lib.dir}/classes"/>
-	<property name="javacc.home" value="${dev.dir}/javacc/"/>
+	<property name="javacc.home" value="${dev.dir}/javacc"/>
 	<property name="tomcat.dir" value="${env.CATALINA_HOME}"/>
 	<property name="version" value="1.1"/>
-<!--	<property name="major.jar" value="${major.jar}"/>-->
-<!--	<property name="plugin" value="${plugin}"/>-->
 
 	<condition property="debug.arg" value="-debug" else="">
 		<or>
@@ -71,11 +69,9 @@
 		debug="true"
 		srcdir="${src.dir}/com/pmdesigns/jvc"
 		destdir="${class.dir}"
-		classpathref="project.classpath">
-		<classpath location="${major.jar}"/>
-		<compilerarg value="${plugin}"/>
-		</javac>
-
+		classpathref="project.classpath"
+		/>
+		
 		<jar
 		destfile="${dist.dir}/jvc.jar"
 		basedir="${class.dir}"
