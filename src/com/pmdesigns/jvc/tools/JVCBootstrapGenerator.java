@@ -1,5 +1,7 @@
 package com.pmdesigns.jvc.tools;
 
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.*;
 import java.util.*;
 
@@ -13,10 +15,12 @@ public class JVCBootstrapGenerator {
 	public static final String TEMPLATE_SUFFIX = ".java.tpl";
 
 	
+	@Impure
 	public static void usage() {
 		System.err.println("args   : <template dir> <src root dir> [-force] [-debug]");
 	}
 
+	@Impure
 	public static void main(String[] args) {
 		if (args.length < 2 || args.length > 4) {
 			System.err.println("Wrong number of args");
@@ -55,6 +59,7 @@ public class JVCBootstrapGenerator {
 		}
 	}
 
+	@Impure
 	public static void generate(File tplDir, File srcRoot, boolean force, boolean debug) throws
 		FileNotFoundException, ParseException {
 		
@@ -110,6 +115,8 @@ public class JVCBootstrapGenerator {
 		}
 	}
 	
+	@SideEffectFree
+	@Impure
 	static String getGeneratorName(File f) {
 		if (f.isDirectory()) return null;
 
@@ -120,6 +127,7 @@ public class JVCBootstrapGenerator {
 		return capitalize(name);
 	}
 
+	@SideEffectFree
 	public static String capitalize(String s) {
 		if (s == null || s.length() == 0) return s;
 		return Character.toUpperCase(s.charAt(0)) + s.substring(1);

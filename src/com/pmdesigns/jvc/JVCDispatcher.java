@@ -1,5 +1,7 @@
 package com.pmdesigns.jvc;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
 import java.io.*;
 import java.util.*;
 import java.net.HttpURLConnection;
@@ -32,6 +34,7 @@ public class JVCDispatcher extends HttpServlet {
 	private static final boolean TRACE = true;
 
 	private static ThreadLocal<JVCRequestContext> ctxHolder = new ThreadLocal<JVCRequestContext>() {
+		@Pure
 		protected synchronized JVCRequestContext initialValue() {
 			return null;
 		}
@@ -42,6 +45,7 @@ public class JVCDispatcher extends HttpServlet {
 	 * Return the thread local request context
 	 * @return the JVCRequestContext associated with the current thread or null
 	 */
+	@Impure
 	public static JVCRequestContext getRC() {
 		return ctxHolder.get();
 	}
@@ -52,6 +56,7 @@ public class JVCDispatcher extends HttpServlet {
 	 * name of page generators and controllers.  Also create and instance
 	 * of the Application object.
 	 */
+	@Impure
 	public void init() {
 		pkgPrefix = getInitParameter(PKG_PREFIX_KEY);
 		generatorClasses = new HashMap<String,Class>();
@@ -87,6 +92,7 @@ public class JVCDispatcher extends HttpServlet {
 	/**
 	 * Notify the Application that its shutdown time.
 	 */
+	@Impure
 	public void destroy() {
 		if (application != null) {
 			application.destroy();
@@ -102,6 +108,7 @@ public class JVCDispatcher extends HttpServlet {
 	 * @throws IOException
 	 * @throws ServletException
 	 */
+    @Impure
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws
 		IOException, ServletException {
 		handleRequest(request, response);
@@ -115,6 +122,7 @@ public class JVCDispatcher extends HttpServlet {
 	 * @throws IOException
 	 * @throws ServletException
 	 */
+    @Impure
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws
 		IOException, ServletException {
 		handleRequest(request, response);
@@ -129,6 +137,7 @@ public class JVCDispatcher extends HttpServlet {
 	 * @throws IOException
 	 * @throws ServletException
 	 */
+	@Impure
 	private void handleRequest(HttpServletRequest request, HttpServletResponse response) throws
 		IOException, ServletException {
 		long t0,t1;
@@ -290,6 +299,7 @@ public class JVCDispatcher extends HttpServlet {
 	/**
 	 * Copy an input stream to an output stream.
 	 */
+	@Impure
 	private void copy(InputStream in, OutputStream out) throws IOException {
 		byte[] buf = new byte[4096];
 		int read;
@@ -303,6 +313,7 @@ public class JVCDispatcher extends HttpServlet {
 	/**
 	 * Append a package string to a prefix if the prefix isn't empty
 	 */
+	@Pure
 	private static String appendPkg(String prefix, String pkg) {
 		return (prefix == null || prefix.length() == 0) ? pkg : prefix+"."+pkg;
 	}
@@ -318,6 +329,7 @@ public class JVCDispatcher extends HttpServlet {
 	 * @see #serializeMap
 	 * @see #deserializeMap
 	 */
+	@Impure
 	private static Map<String,String> getFlash(HttpServletRequest request, HttpServletResponse response) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
@@ -347,6 +359,7 @@ public class JVCDispatcher extends HttpServlet {
 	 * @see #serializeMap
 	 * @see #deserializeMap
 	 */
+	@Impure
 	private static Cookie makeFlashCookie(Map<String,String> map) {
 		return new Cookie(FLASH_COOKIE, serializeMap(map));
 	}
@@ -361,6 +374,7 @@ public class JVCDispatcher extends HttpServlet {
 	 * @see #makeFlashCookie
 	 * @see #deserializeMap
 	 */
+	@Impure
 	private static String serializeMap(Map<String,String> map) {
 		StringBuilder sb = new StringBuilder();
 		for (String key : map.keySet()) {
@@ -380,6 +394,7 @@ public class JVCDispatcher extends HttpServlet {
 	 * @see #makeFlashCookie
 	 * @see #serializeMap
 	 */
+	@Impure
 	private static Map<String,String> deserializeMap(String s) {
 		s = Base64Coder.decodeString(s);
 

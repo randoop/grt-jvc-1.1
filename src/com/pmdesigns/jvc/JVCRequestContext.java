@@ -1,5 +1,8 @@
 package com.pmdesigns.jvc;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import java.util.*;
 import java.net.HttpURLConnection;
 import javax.servlet.*;
@@ -65,6 +68,7 @@ public final class JVCRequestContext {
 	 * @param controller
 	 * @param action
 	 */
+	@SideEffectFree
 	JVCRequestContext(HttpServletRequest request, HttpServletResponse response, HttpServlet servlet,
 					  Map<String,String> flash, String controller, String action) {
 		this.request = request;
@@ -81,6 +85,7 @@ public final class JVCRequestContext {
 	 * Convenience method
 	 * @return true if the request is secure
 	 */
+	@Impure
 	public boolean isSecure() {
 		return request.isSecure();
 	}
@@ -89,6 +94,7 @@ public final class JVCRequestContext {
 	 * Convenience method
 	 * @return the request scheme, ie. http, https
 	 */
+	@Impure
 	public String getScheme() {
 		return request.getScheme();
 	}
@@ -97,6 +103,7 @@ public final class JVCRequestContext {
 	 * Convenience method
 	 * @return the request method, ie. GET, POST
 	 */
+	@Impure
 	public String getMethod() {
 		return request.getMethod();
 	}
@@ -105,6 +112,7 @@ public final class JVCRequestContext {
 	 * Convenience method
 	 * @return the server name for this request
 	 */
+	@Impure
 	public String getServerName() {
 		return request.getServerName();
 	}
@@ -113,6 +121,7 @@ public final class JVCRequestContext {
 	 * Convenience method
 	 * @return the server port for this request
 	 */
+	@Impure
 	public int getServerPort() {
 		return request.getServerPort();
 	}
@@ -128,6 +137,7 @@ public final class JVCRequestContext {
 	 * @see #getQueryString
 	 * @return the context path part of the url path
 	 */
+	@Impure
 	public String getContextPath() {
 		return request.getContextPath();
 	}
@@ -143,6 +153,7 @@ public final class JVCRequestContext {
 	 * @see #getQueryString
 	 * @return the servlet path part of the url path
 	 */
+	@Impure
 	public String getServletPath() {
 		return request.getServletPath();
 	}
@@ -158,6 +169,7 @@ public final class JVCRequestContext {
 	 * @see #getServletPath
 	 * @return the query string part of the url path
 	 */
+	@Impure
 	public String getQueryString() {
 		return request.getQueryString();
 	}
@@ -172,6 +184,7 @@ public final class JVCRequestContext {
 	 * @see #getParamValues
 	 * @see #getParamNames
 	 */
+	@Impure
 	public String getParam(String name) {
 		return request.getParameter(name);
 	}
@@ -197,6 +210,7 @@ public final class JVCRequestContext {
 	 * @see #getParamValues
 	 * @see #getParamNames
 	 */
+	@Impure
 	public Map<String,String> getParamMap(String name) {
 		Map<String,String> m = new HashMap<String,String>();
 		Map<String,String[]> pm = request.getParameterMap();
@@ -219,6 +233,7 @@ public final class JVCRequestContext {
 	 * @see #getParamMap
 	 * @see #getParamNames
 	 */
+	@Impure
 	public String[] getParamValues(String name) {
 		return request.getParameterValues(name);
 	}
@@ -230,6 +245,7 @@ public final class JVCRequestContext {
 	 * @see #getParamMap
 	 * @see #getParamValues
 	 */
+	@Impure
 	public String[] getParamNames() {
 		Map<String,String[]> m = request.getParameterMap();
 		String[] a = new String[m.size()];
@@ -249,6 +265,7 @@ public final class JVCRequestContext {
 	 * @see #setSessionAttr
 	 * @see #getSessionAttrNames
 	 */
+	@Impure
 	public Object getSessionAttr(String name) {
 		if (request.getSession() == null) return null;
 		return request.getSession().getAttribute(name);
@@ -261,6 +278,7 @@ public final class JVCRequestContext {
 	 * @see #setSessionAttr
 	 * @see #removeSessionAttr
 	 */
+	@Impure
 	public String[] getSessionAttrNames() {
 		if (request.getSession(false) == null) return new String[0];
 		ArrayList<String> a = new ArrayList<String>();
@@ -278,6 +296,7 @@ public final class JVCRequestContext {
 	 * @see #getSessionAttr
 	 * @see #removeSessionAttr
 	 */
+	@Impure
 	public void setSessionAttr(String name, Object value) {
 		if (request.getSession() == null) return;
 		request.getSession().setAttribute(name, value);
@@ -288,6 +307,7 @@ public final class JVCRequestContext {
 	 * @param name  the key of
 	 * @see #setSessionAttr
 	 */
+	@Impure
 	public void removeSessionAttr(String name) {
 		if (request.getSession() == null) return;
 		request.getSession().removeAttribute(name);
@@ -302,6 +322,7 @@ public final class JVCRequestContext {
 	 * @see #setCookie
 	 * @see #getCookieNames
 	 */
+	@Impure
 	public Cookie getCookie(String name) {
 		if (name == null) return null;
 		Cookie[] cookies = request.getCookies();
@@ -318,6 +339,7 @@ public final class JVCRequestContext {
 	 * @see #getCookie
 	 * @see #setCookie
 	 */
+	@Impure
 	public String[] getCookieNames() {
 		Cookie[] cookies = request.getCookies();
 		if (cookies == null) return new String[0];
@@ -335,6 +357,7 @@ public final class JVCRequestContext {
 	 * @see #getCookie
 	 * @see #getCookieNames
 	 */
+	@Impure
 	public void setCookie(Cookie cookie) {
 		response.addCookie(cookie);
 	}
@@ -348,6 +371,8 @@ public final class JVCRequestContext {
 	 * If you call this method inside a try/catch block make sure you re-throw
 	 * the NonStandardResponseException.
 	 */
+	@SideEffectFree
+	@Impure
 	public void nonStandardResponse(int httpCode, String arg) {
 		throw new NonStandardResponseException(httpCode, arg);
 	}
@@ -361,6 +386,7 @@ public final class JVCRequestContext {
 	 * If you call this method inside a try/catch block make sure you re-throw
 	 * the NonStandardResponseException.
 	 */
+	@Impure
 	public void redirect(String path) {
 		if (path.startsWith("/")) path = absPath(path);
 		nonStandardResponse(HttpURLConnection.HTTP_MOVED_TEMP, path);
@@ -371,6 +397,7 @@ public final class JVCRequestContext {
 	 * @param path    a servlet path
 	 * @return the context path plus the indicated path
 	 */
+	@Impure
 	public String absPath(String path) {
 		return getContextPath() + (path.startsWith("/") ? path : "/" + path);
 	}
@@ -383,6 +410,7 @@ public final class JVCRequestContext {
 	 * @see #makeLink
 	 * @see #absPath
 	 */
+	@Impure
 	public String makeLink(String anchor, String path) {
 		return makeLink(anchor, path, "");
 	}
@@ -396,6 +424,7 @@ public final class JVCRequestContext {
 	 * @see #makeLink
 	 * @see #absPath
 	 */
+	@Impure
 	public String makeLink(String anchor, String path, String options) {
 		if (path.startsWith("/")) path = absPath(path);
 		return "<a href='"+path+"' "+options+">"+anchor+"</a>";
@@ -404,6 +433,7 @@ public final class JVCRequestContext {
 	/**
 	 * Convenience method to check if this request is a POST
 	 */
+	@Impure
 	public boolean isPost() {
 		return "POST".equals(request.getMethod());
 	}
@@ -411,6 +441,7 @@ public final class JVCRequestContext {
 	/**
 	 * Convenience method to check if this request is a GET
 	 */
+	@Impure
 	public boolean isGet() {
 		return "GET".equals(request.getMethod());
 	}
@@ -421,6 +452,7 @@ public final class JVCRequestContext {
 	 * @return the flash value associated with the indicated key or null
 	 * @see #setFlash
 	 */
+	@Pure
 	public String getFlash(String key) {
 		return flash.get(key);
 	}
@@ -431,6 +463,7 @@ public final class JVCRequestContext {
 	 * @param val  the value to store
 	 * @see #getFlash
 	 */
+	@Impure
 	public void setFlash(String key, String val) {
 		flash.put(key, val);
 	}
@@ -441,6 +474,7 @@ public final class JVCRequestContext {
 	 * Internal method used to retrieve a cached block
 	 * @see #setCachedBlock
 	 */
+	@Pure
 	public static String getCachedBlock(String key) {
 		return (cacheMap == null) ? null : cacheMap.get(key);
 	}
@@ -449,6 +483,7 @@ public final class JVCRequestContext {
 	 * Internal method used to store a cached block
 	 * @see #getCachedBlock
 	 */
+	@Impure
 	public static void setCachedBlock(String key, String val) {
 		if (cacheMap == null) {
 			cacheMap = new HashMap<String, String>();
@@ -460,10 +495,12 @@ public final class JVCRequestContext {
 	 * For debugging
 	 * @return a string representation of this request context
 	 */
+	@Impure
 	public String toString() {
 		return toString(", ");
 	}
 	
+	@Impure
 	public String toString(String sep) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("params: [");

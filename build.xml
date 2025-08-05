@@ -34,6 +34,7 @@
 		</fileset>
 		<pathelement path="${tomcat.dir}/lib/servlet-api.jar"/>
 		<pathelement path="${class.dir}" />
+		<pathelement location="../../../scripts/build/checker-framework/checker/dist/checker-qual.jar"/>
 	</path>
 
 	<target name="init">
@@ -70,8 +71,6 @@
 		srcdir="${src.dir}/com/pmdesigns/jvc"
 		destdir="${class.dir}"
 		classpathref="project.classpath">
-		<classpath location="${major.jar}"/>
-		<compilerarg value="${plugin}"/>
 		</javac>
 
 		<jar

@@ -1,5 +1,7 @@
 package com.pmdesigns.jvc;
 
+import org.checkerframework.dataflow.qual.Impure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 import org.apache.log4j.Logger;
 
 /**
@@ -20,9 +22,11 @@ public final class Log {
 		}
 	}
 
+	@SideEffectFree
 	private Log() {
 	}
 
+	@Impure
 	public static void trace(final Object message) {
 		if (log4jAvailable) {
 			Logger.getLogger(LOG_NAME).trace(message);
@@ -31,6 +35,7 @@ public final class Log {
 		}
 	}
 
+	@Impure
 	public static void trace(final Object message, Throwable t) {
 		if (log4jAvailable) {
 			Logger.getLogger(LOG_NAME).trace(message, t);
@@ -40,6 +45,7 @@ public final class Log {
 		}
 	}
 
+	@Impure
 	public static void debug(final Object message) {
 		if (log4jAvailable) {
 			Logger.getLogger(LOG_NAME).debug(message);
@@ -48,6 +54,7 @@ public final class Log {
 		}
 	}
 
+	@Impure
 	public static void debug(final Object message, Throwable t) {
 		if (log4jAvailable) {
 			Logger.getLogger(LOG_NAME).debug(message, t);
@@ -57,6 +64,7 @@ public final class Log {
 		}
 	}
 
+	@Impure
 	public static void info(final Object message) {
 		if (log4jAvailable) {
 			Logger.getLogger(LOG_NAME).info(message);
@@ -65,6 +73,7 @@ public final class Log {
 		}
 	}
 
+	@Impure
 	public static void info(final Object message, Throwable t) {
 		if (log4jAvailable) {
 			Logger.getLogger(LOG_NAME).info(message, t);
@@ -74,6 +83,7 @@ public final class Log {
 		}
 	}
 
+	@Impure
 	public static void warn(final Object message) {
 		if (log4jAvailable) {
 			Logger.getLogger(LOG_NAME).warn(message);
@@ -82,6 +92,7 @@ public final class Log {
 		}
 	}
 
+	@Impure
 	public static void warn(final Object message, Throwable t) {
 		if (log4jAvailable) {
 			Logger.getLogger(LOG_NAME).warn(message, t);
@@ -91,6 +102,7 @@ public final class Log {
 		}
 	}
 
+	@Impure
 	public static void error(final Object message) {
 		if (log4jAvailable) {
 			Logger.getLogger(LOG_NAME).error(message);
@@ -99,6 +111,7 @@ public final class Log {
 		}
 	}
 
+	@Impure
 	public static void error(final Object message, Throwable t) {
 		if (log4jAvailable) {
 			Logger.getLogger(LOG_NAME).error(message, t);

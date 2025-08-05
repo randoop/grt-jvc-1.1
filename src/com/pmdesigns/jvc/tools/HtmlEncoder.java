@@ -1,10 +1,12 @@
 package com.pmdesigns.jvc.tools;
+import org.checkerframework.dataflow.qual.Impure;
 
 /**
  * A simple HTML encoder
  */
 public class HtmlEncoder {
 	
+	@Impure
 	public static String encode(String s) {
 		int len = s.length();
 

@@ -1,4 +1,5 @@
 package com.pmdesigns.jvc;
+import org.checkerframework.dataflow.qual.SideEffectFree;
 
 
 /**
@@ -11,6 +12,7 @@ public final class NonStandardResponseException extends RuntimeException {
 	public final int httpCode;
 	public final String arg;
 	
+	@SideEffectFree
 	public NonStandardResponseException(int httpCode, String arg) {
 		this.httpCode = httpCode;
 		this.arg = arg;

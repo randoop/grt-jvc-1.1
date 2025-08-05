@@ -1,5 +1,8 @@
 package com.pmdesigns.jvc.tools;
 
+import org.checkerframework.dataflow.qual.Pure;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
 import java.io.*;
 import java.util.*;
 import java.lang.reflect.Method;
@@ -29,11 +32,13 @@ public class JVCGenerator {
 											  "LocalBaseController","PageController","PageGenerator"};
 	
 	
+	@Impure
 	public static void usage() {
 		System.err.println("args   : <template root dir> <src root dir> [<package prefix>] [-force] [-debug]");
 		System.err.println("example: ./templates ./src com.pmdesigns -debug");
 	}
 
+	@Impure
 	public static void main(String[] args) {
 		if (args.length < 2 || args.length > 5) {
 			System.err.println("Wrong number of args");
@@ -80,6 +85,7 @@ public class JVCGenerator {
 		}
 	}
 
+	@Impure
 	public void generate() throws Exception {
 		
 		if (!docRoot.isDirectory()) {
@@ -125,6 +131,7 @@ public class JVCGenerator {
 		}
 	}
 	
+	@Impure
 	private void walkDir(File templateDir, String relPath) throws Exception {
 
 		makeGeneratorsAndControllers(templateDir, relPath);
@@ -137,6 +144,7 @@ public class JVCGenerator {
 		}
 	}
 	
+	@Impure
 	private void makeGeneratorsAndControllers(File templateDir, String relPath) throws Exception {
 		TreeSet<String> imports = new TreeSet<String>();
 		boolean atRoot = (relPath.length() == 1);
@@ -188,6 +196,7 @@ public class JVCGenerator {
 		}
 	}
 
+	@Impure
 	private void makeClass(String generatorName, String relPath, String name, String dirName,
 						   Set<String> imports, String body, File outFile) throws Exception {
 		// build the parameter map, templates expect the following keys:
@@ -248,6 +257,7 @@ public class JVCGenerator {
 		System.out.println("wrote: "+outFile);
 	}
 
+	@SideEffectFree
 	private static boolean isTemplate(File f) {
 		if (f.isDirectory()) return false;
 
@@ -256,11 +266,13 @@ public class JVCGenerator {
 	}
 
 	
+	@SideEffectFree
 	public static String capitalize(String s) {
 		if (s == null || s.length() == 0) return s;
 		return Character.toUpperCase(s.charAt(0)) + s.substring(1);
 	}
 
+	@Pure
 	private static String appendPkg(String prefix, String pkg) {
 		return (prefix == null || prefix.length() == 0) ? pkg : prefix+"."+pkg;
 	}

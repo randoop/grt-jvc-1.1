@@ -1,4 +1,6 @@
 package com.pmdesigns.jvc.tools;
+import org.checkerframework.dataflow.qual.SideEffectFree;
+import org.checkerframework.dataflow.qual.Impure;
 
 /**
 * A Base64 Encoder/Decoder.
@@ -46,6 +48,7 @@ private static byte[]    map2 = new byte[128];
 * @param s  a String to be encoded.
 * @return   A String with the Base64 encoded data.
 */
+@Impure
 public static String encodeString (String s) {
    return new String(encode(s.getBytes())); }
 
@@ -55,6 +58,7 @@ public static String encodeString (String s) {
 * @param in  an array containing the data bytes to be encoded.
 * @return    A character array with the Base64 encoded data.
 */
+@Impure
 public static char[] encode (byte[] in) {
    return encode(in,in.length); }
 
@@ -65,6 +69,7 @@ public static char[] encode (byte[] in) {
 * @param iLen number of bytes to process in <code>in</code>.
 * @return     A character array with the Base64 encoded data.
 */
+@Impure
 public static char[] encode (byte[] in, int iLen) {
    int oDataLen = (iLen*4+2)/3;       // output length without padding
    int oLen = ((iLen+2)/3)*4;         // output length including padding
@@ -91,6 +96,7 @@ public static char[] encode (byte[] in, int iLen) {
 * @return   A String containing the decoded data.
 * @throws   IllegalArgumentException if the input is not valid Base64 encoded data.
 */
+@Impure
 public static String decodeString (String s) {
    return new String(decode(s)); }
 
@@ -100,6 +106,7 @@ public static String decodeString (String s) {
 * @return   An array containing the decoded data bytes.
 * @throws   IllegalArgumentException if the input is not valid Base64 encoded data.
 */
+@Impure
 public static byte[] decode (String s) {
    return decode(s.toCharArray()); }
 
@@ -110,6 +117,7 @@ public static byte[] decode (String s) {
 * @return    An array containing the decoded data bytes.
 * @throws    IllegalArgumentException if the input is not valid Base64 encoded data.
 */
+@Impure
 public static byte[] decode (char[] in) {
    int iLen = in.length;
    if (iLen%4 != 0) throw new IllegalArgumentException ("Length of Base64 encoded input string is not a multiple of 4.");
@@ -140,6 +148,7 @@ public static byte[] decode (char[] in) {
    return out; }
 
 // Dummy constructor.
+@SideEffectFree
 private Base64Coder() {}
 
 } // end class Base64Coder
